@@ -55,7 +55,7 @@
 
   table.crossword {
     border-collapse: collapse;
-    margin: 40px 0;
+    margin: 40px auto;
   }
 
   .crossword td {
@@ -67,13 +67,14 @@
     position: relative;
     font-weight: bold;
     color: #333;
+    background: #fff;
   }
 
   .crossword.dirty td {
     color: #999;
   }
 
-  .filled {
+  .crossword td.filled {
     background: #333;
   }
 </style>
