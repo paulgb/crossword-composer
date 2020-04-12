@@ -26,6 +26,7 @@
       solver.solve(crossword.words)
     }
     dirty = true
+    hideLetters = false
   }
 
   // Called when the "start" button is clicked.
@@ -33,6 +34,7 @@
     e.preventDefault()
     solver.solve(crossword.words)
     autoRun = true
+    hideLetters = false
   }
 
   // Called when the "stop" button is clicked.

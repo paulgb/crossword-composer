@@ -43,6 +43,7 @@ impl Grid {
     }
 }
 
+#[allow(dead_code)]
 pub fn simple_crossword() -> Grid {
     Grid::new(vec![
         vec![0, 1, 2, 3],
@@ -58,6 +59,7 @@ pub fn simple_crossword() -> Grid {
     ])
 }
 
+#[allow(dead_code)]
 pub fn four_by_four_grid() -> Grid {
     Grid::new(vec![
         vec![0, 1, 2, 3],

@@ -7,6 +7,7 @@ pub struct Dictionary {
 }
 
 impl Dictionary {
+    #[allow(dead_code)]
     pub fn from_file(filename: String) -> io::Result<Dictionary> {
         let file = File::open(filename)?;
         let words: Vec<String> = io::BufReader::new(file)

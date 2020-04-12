@@ -1,20 +1,17 @@
-extern crate wasm_bindgen;
 extern crate js_sys;
+extern crate wasm_bindgen;
 extern crate web_sys;
 
-mod grid;
-mod solver;
-mod index;
 mod dictionary;
+mod grid;
+mod index;
+mod solver;
 
 use self::js_sys::Array;
 use crate::dictionary::Dictionary;
 extern crate console_error_panic_hook;
-use std::panic;
-
 
 use wasm_bindgen::prelude::*;
-use web_sys::console;
 
 #[wasm_bindgen]
 pub struct Solver {
@@ -29,17 +26,18 @@ impl Solver {
         let words: Vec<String> = words_arr.iter().map(|d| d.as_string().unwrap()).collect();
         let dict = Dictionary::from_vec(words);
 
-        Solver {
-            dict
-        }
+        Solver { dict }
     }
 
     pub fn solve(&self, spec_arr: Array) -> JsValue {
-        let spec: Vec<Vec<usize>> = spec_arr.iter().map(|a| {
-            let ar: Array = a.into();
+        let spec: Vec<Vec<usize>> = spec_arr
+            .iter()
+            .map(|a| {
+                let ar: Array = a.into();
 
-            ar.iter().map(|v| v.as_f64().unwrap() as usize).collect()
-        }).collect();
+                ar.iter().map(|v| v.as_f64().unwrap() as usize).collect()
+            })
+            .collect();
 
         let grid = grid::Grid::new(spec);
 
@@ -48,7 +46,7 @@ impl Solver {
         if let Some(r) = result {
             let v: Vec<JsValue> = r.iter().map(|c| c.to_string().into()).collect();
             let a: Array = v.iter().collect();
-            
+
             a.into()
         } else {
             JsValue::NULL
