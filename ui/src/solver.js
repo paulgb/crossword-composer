@@ -1,29 +1,38 @@
-import init, * as cw from '../../pkg/crossword';
 
 export class Solver {
     async setup() {
         let result = await fetch('/words.txt')
         let text = await result.text()
-        let arr = text.split('\n')
-
-        await init()
-
-        console.log('here1')
-        this.solver = cw.Solver.new(arr)
-        console.log('here2')
+        this.wordlist = text.split('\n')
     }
 
-    constructor() {
-        this.solver = null
+    constructor(onSolution) {
+        this.worker = null
+        this.wordlist = null
+        this.onSolution = onSolution
         this.setup()
     }
 
-    solve(grid) {
-        if (!this.solver) {
-            console.log('asked to solve before ready.')
-            return null
+    terminate() {
+        if (this.worker) {
+            this.worker.terminate()
         }
+    }
 
-        return this.solver.solve(grid)
+    messageReceived(message) {
+        this.onSolution(message)
+    }
+
+    solve(grid) {
+        this.terminate()
+
+        this.worker = new Worker('/build/worker.js')
+
+        this.worker.onmessage = this.messageReceived.bind(this)
+
+        this.worker.postMessage({
+            wordlist: this.wordlist,
+            grid
+        })
     }
 }

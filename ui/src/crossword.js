@@ -25,6 +25,8 @@ export class Crossword {
                 let cell = this.grid[i][j]
                 if (cell.index !== null) {
                     cell.value = values[cell.index]
+                } else {
+                    cell.value = ''
                 }
             }
         }

@@ -5,18 +5,20 @@ import {Crossword} from './crossword'
 import {Solver} from './solver'
 
 $: crossword = new Crossword(dimension)
-let solver = new Solver()
+let solver = new Solver(onSolution)
 
 function toggleCell(i, j) {
     crossword.toggle(i, j)
     crossword = crossword
 }
 
+function onSolution(result) {
+    crossword.setLetters(result.data)
+    crossword = crossword
+}
+
 function solve() {
     let result = solver.solve(crossword.words)
-    console.log(result)
-    crossword.setLetters(result)
-    crossword = crossword
 }
 </script>
 

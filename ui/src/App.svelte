@@ -1,10 +1,10 @@
 <script>
 import Crossword from './Crossword.svelte'
 
-$: dimension = 6;
+$: dimension = 5;
 </script>
 
 <div>
-	<label>Dimensions: <input bind:value={dimension} /></label>
+	<label>Height/width: <input bind:value={dimension} /></label>
 	<Crossword dimension={parseInt(dimension)} />
 </div>
