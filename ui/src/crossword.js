@@ -9,7 +9,7 @@ class Cell {
 }
 
 export class Crossword {
-    constructor(dimension) {
+    constructor(dimension, onGridChanged) {
         this.dimension = dimension
         this.grid = new Array(dimension).fill(0).map(() =>
             new Array(dimension).fill(null).map(() => new Cell())
@@ -17,6 +17,7 @@ export class Crossword {
         this.words = null;
 
         this.generateNumbers()
+        this.onGridChanged = onGridChanged
     }
 
     setLetters(values) {
@@ -107,5 +108,6 @@ export class Crossword {
         this.grid[this.dimension-1-i][this.dimension-1-j].filled = this.grid[i][j].filled
 
         this.generateNumbers()
+        this.onGridChanged()
     }
 }

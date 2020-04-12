@@ -9,7 +9,7 @@ mod dictionary;
 
 use self::js_sys::Array;
 use crate::dictionary::Dictionary;
-use web_sys::console;
+// use web_sys::console;
 
 use wasm_bindgen::prelude::*;
 
@@ -40,7 +40,6 @@ impl Solver {
         let grid = grid::Grid::new(spec);
 
         let result = solver::solve(&grid, &self.dict);
-        console::log_1(&format!("{:?}", result).into());
 
         if let Some(r) = result {
             let v: Vec<JsValue> = r.iter().map(|c| c.to_string().into()).collect();
