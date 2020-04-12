@@ -2,6 +2,7 @@ use crate::dictionary::Dictionary;
 use std::collections::HashMap;
 
 static EMPTY_VEC: Vec<(usize, Vec<char>)> = Vec::new();
+static EMPTY_VEC2: Vec<Vec<char>> = Vec::new();
 
 #[derive(Clone)]
 pub struct Index {
@@ -18,7 +19,7 @@ impl Index {
             .collect();
         let mut known_to_unknown = HashMap::new();
         // TODO: unwrap may fail if dict is empty for this word length.
-        let word_list = dict.words.get(&word_length).unwrap();
+        let word_list = dict.words.get(&word_length).unwrap_or(&EMPTY_VEC2);
 
         for (i, w) in word_list.iter().enumerate() {
             let key: Vec<char> = known_letters.iter().map(|j| w[*j]).collect();

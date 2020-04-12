@@ -1,43 +1,45 @@
 <script>
-  import { Crossword } from "./crossword";
-  import { Solver } from "./solver";
+  import { Crossword } from "./crossword"
+  import { Solver } from "./solver"
 
-  const allowedDimensions = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
-  $: dimension = 8;
+  const allowedDimensions = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+  $: dimension = 8
 
-  $: crossword = new Crossword(dimension, gridChanged);
-  let solver = new Solver(onSolution);
+  $: crossword = new Crossword(dimension, gridChanged)
+  let solver = new Solver(onSolution)
+
+  let hideLetters = false
 
   // Status message to display.
-  let status = "";
+  let status = ""
 
   // Whether the filler is currently running.
-  let autoRun = false;
+  let autoRun = false
 
   // If the board has changed since the last successful run.
-  let dirty = true;
+  let dirty = true
 
   // Called when the grid is changed, either because the dimensions change,
   // or because a cell is toggled.
   function gridChanged() {
     if (autoRun) {
-      solver.solve(crossword.words);
+      solver.solve(crossword.words)
     }
-    dirty = true;
+    dirty = true
   }
 
   // Called when the "start" button is clicked.
   function enableAutoRun(e) {
-    e.preventDefault();
-    solver.solve(crossword.words);
-    autoRun = true;
+    e.preventDefault()
+    solver.solve(crossword.words)
+    autoRun = true
   }
 
   // Called when the "stop" button is clicked.
   function disableAutoRun(e) {
-    e.preventDefault();
-    solver.terminate();
-    autoRun = false;
+    e.preventDefault()
+    solver.terminate()
+    autoRun = false
   }
 
   // Called when the user toggles a cell between filled and unfilled by clicking.
@@ -48,15 +50,15 @@
 
   // Called when a new solution is received from the background worker.
   function onSolution(result) {
-    crossword.setLetters(result.data);
-    crossword = crossword;
-    dirty = false;
+    crossword.setLetters(result.data)
+    crossword = crossword
+    dirty = false
   }
 
   // Status message update loop.
   setInterval(() => {
-    status = solver.getStatus();
-  }, 100);
+    status = solver.getStatus()
+  }, 100)
 </script>
 
 <style>
@@ -129,7 +131,7 @@
               on:click={() => toggleCell(i, j)}
               class={cell.filled ? 'filled' : ''}
               title={cell.index}>
-              {cell.filled ? '' : (cell.value || '').toUpperCase()}
+              {(hideLetters || cell.filled) ? '' : (cell.value || '').toUpperCase()}
               <div class="number">{cell.number ? cell.number : ''}</div>
             </td>
           {/each}
@@ -148,14 +150,19 @@
     </div>
     <div style="flex: 1;"><p>{status}</p></div>
     <div>
-    <label>
-      Size:
-      <select bind:value={dimension}>
-        {#each allowedDimensions as ad}
-          <option value={ad}>{ad} x {ad}</option>
-        {/each}
-      </select>
-    </label>
+      <label>
+        Hide Letters: <input bind:checked={hideLetters} type="checkbox" />
+      </label>
+    </div>
+    <div>
+      <label>
+        Size:
+        <select bind:value={dimension}>
+          {#each allowedDimensions as ad}
+            <option value={ad}>{ad} x {ad}</option>
+          {/each}
+        </select>
+      </label>
     </div>
   </div>
 </div>

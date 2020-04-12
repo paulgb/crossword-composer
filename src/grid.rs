@@ -23,12 +23,15 @@ impl Grid {
     }
 
     pub fn new(words: Vec<Vec<usize>>) -> Grid {
-        let slots: usize = words
-            .iter()
-            .map(|w| *w.iter().max().unwrap())
-            .max()
-            .unwrap()
-            + 1;
+        let slots = if words.len() > 0 {
+            words
+                .iter()
+                .map(|w| *w.iter().max().unwrap())
+                .max()
+                .unwrap() + 1
+        } else {
+            0
+        };
 
         let slot_to_words = Grid::generate_slot_to_words(&words, slots);
 

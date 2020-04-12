@@ -65,7 +65,12 @@ export class Solver {
     }
 
     getStatus() {
-        return `${this.status.getStatus()} (${this.status.getTime()})`
+        if (this.status.started) {
+            return `${this.status.getStatus()} (${this.status.getTime()})`
+        } else {
+            return 'Click Start to begin filling.'
+        }
+        
     }
 
     solve(grid) {

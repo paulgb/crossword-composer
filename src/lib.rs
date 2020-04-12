@@ -9,9 +9,12 @@ mod dictionary;
 
 use self::js_sys::Array;
 use crate::dictionary::Dictionary;
-// use web_sys::console;
+extern crate console_error_panic_hook;
+use std::panic;
+
 
 use wasm_bindgen::prelude::*;
+use web_sys::console;
 
 #[wasm_bindgen]
 pub struct Solver {
@@ -21,8 +24,9 @@ pub struct Solver {
 #[wasm_bindgen]
 impl Solver {
     pub fn new(words_arr: Array) -> Solver {
-        let words: Vec<String> = words_arr.iter().map(|d| d.as_string().unwrap()).collect();
+        console_error_panic_hook::set_once();
 
+        let words: Vec<String> = words_arr.iter().map(|d| d.as_string().unwrap()).collect();
         let dict = Dictionary::from_vec(words);
 
         Solver {
