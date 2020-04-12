@@ -14,5 +14,32 @@
 </head>
 
 <body>
+	<div class="main">
+		<h1>Crossword Constructor</h1>
+
+		<div id="app-root"></div>
+
+		<p><strong>How to use:</strong> click squares in the grid above to toggle
+		between filled and blank squares. Then, hit “Start“ to start the filler.
+		If the filler is slow, it is having trouble finding a combination of words
+		that works with the pattern you provided. You can either give it time (but 
+		keep in mind not all grids have a solution!), or add more filled-in squares
+		to make its job easier.
+		</p>
+
+		<p>You can leave the filler turned on as you modify the grid to see updates
+			as quickly as the filler can operate. Just keep in mind that filling
+			a crossword can be computationally intensive, so if you are on battery
+			it's better not to leave it running as you edit.
+		</p>
+
+		<p>This was created by <a href="https://twitter.com/paulgb">Paul Butler</a>
+		using <a href="https://www.rust-lang.org/">Rust</a>,
+		<a href="https://webassembly.org/">WebAssembly</a>, and <a href="https://svelte.dev/">Svelte</a>.
+		The vocabulary was taken from <a href="https://github.com/tensorflow/tensorboard">Tensorboard</a>
+		and represents ~71k terms from an English(ish) web corpus. If you have a word list better suited to
+		crosswords, let me know!
+		</p>
+	</div>
 </body>
 </html>

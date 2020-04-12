@@ -1,6 +1,6 @@
-import App from './App.svelte';
+import Crossword from './Crossword.svelte';
 
-new App({
-	target: document.body,
+new Crossword({
+	target: document.getElementById('app-root'),
 	props: {}
 });

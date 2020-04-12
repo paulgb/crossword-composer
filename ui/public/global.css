@@ -5,6 +5,11 @@ html, body {
 	background: #fffff0;
 }
 
+.main {
+	width: 600px;
+	margin: 20px auto;
+}
+
 body {
 	color: #333;
 	margin: 0;

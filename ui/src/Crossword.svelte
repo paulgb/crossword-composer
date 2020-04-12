@@ -1,49 +1,88 @@
 <script>
-  export let dimension;
-
   import { Crossword } from "./crossword";
   import { Solver } from "./solver";
 
+  const allowedDimensions = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
+  $: dimension = 8;
+
   $: crossword = new Crossword(dimension, gridChanged);
   let solver = new Solver(onSolution);
+
+  // Status message to display.
   let status = "";
+
+  // Whether the filler is currently running.
   let autoRun = false;
+
+  // If the board has changed since the last successful run.
   let dirty = true;
 
+  // Called when the grid is changed, either because the dimensions change,
+  // or because a cell is toggled.
   function gridChanged() {
     if (autoRun) {
-      solver.solve(crossword.words)
-    }
-    dirty = true
-  }
-
-  function changeRunFiller() {
-    autoRun = !autoRun;
-
-    if (autoRun) {
       solver.solve(crossword.words);
-    } else {
-      solver.terminate();
     }
+    dirty = true;
   }
 
+  // Called when the "start" button is clicked.
+  function enableAutoRun(e) {
+    e.preventDefault();
+    solver.solve(crossword.words);
+    autoRun = true;
+  }
+
+  // Called when the "stop" button is clicked.
+  function disableAutoRun(e) {
+    e.preventDefault();
+    solver.terminate();
+    autoRun = false;
+  }
+
+  // Called when the user toggles a cell between filled and unfilled by clicking.
   function toggleCell(i, j) {
-    crossword.toggle(i, j)
-    crossword = crossword
+    crossword.toggle(i, j);
+    crossword = crossword;
   }
 
+  // Called when a new solution is received from the background worker.
   function onSolution(result) {
-    crossword.setLetters(result.data)
-    crossword = crossword
-    dirty = false
+    crossword.setLetters(result.data);
+    crossword = crossword;
+    dirty = false;
   }
 
+  // Status message update loop.
   setInterval(() => {
-    status = solver.getStatus()
+    status = solver.getStatus();
   }, 100);
 </script>
 
 <style>
+  .controls {
+    display: flex;
+  }
+
+  .controls p, .controls label {
+    margin: 10px;
+  }
+
+  button {
+    cursor: pointer;
+    border: none;
+    color: white;
+    padding: 10px 15px;
+  }
+
+  .red {
+    background: #752726;
+  }
+
+  .green {
+    background: #26752b;
+  }
+
   .number {
     position: absolute;
     font-size: 8pt;
@@ -68,6 +107,7 @@
     font-weight: bold;
     color: #333;
     background: #fff;
+    cursor: default;
   }
 
   .crossword.dirty td {
@@ -98,9 +138,24 @@
     </tbody>
   </table>
 
-  <label>
-    Run filler
-    <input on:change={changeRunFiller} type="checkbox" checked={autoRun} />
-  </label>
-  <div>{status}</div>
+  <div class="controls">
+    <div>
+      {#if autoRun}
+        <button on:click={disableAutoRun} class="red">Stop</button>
+      {:else}
+        <button on:click={enableAutoRun} class="green">Start</button>
+      {/if}
+    </div>
+    <div style="flex: 1;"><p>{status}</p></div>
+    <div>
+    <label>
+      Size:
+      <select bind:value={dimension}>
+        {#each allowedDimensions as ad}
+          <option value={ad}>{ad} x {ad}</option>
+        {/each}
+      </select>
+    </label>
+    </div>
+  </div>
 </div>
