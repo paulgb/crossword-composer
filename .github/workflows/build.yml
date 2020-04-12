@@ -1,0 +1,32 @@
+name: Build
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Update Rust
+      run: rustup update
+    - name: Run tests
+      run: cargo test --verbose
+    - name: Install wasm-pack
+      run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+    - name: Build WebAssembly
+      run: wasm-pack build
+    - name: Install JS deps
+      run: yarn install
+      working-directory: ui
+    - name: Build UI
+      run: yarn build
+      working-directory: ui
+    - name: Snapshot Version
+      run: |
+        git rev-parse HEAD > version.txt
+        date >> version.txt
+      working-directory: ui/public
+    - name: Upload to Zeit
+      working-directory: ui/public
+      run: now -n crossword --token=${{ secrets.ZEIT_NOW_TOKEN }} --prod --confirm
