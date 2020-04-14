@@ -11,7 +11,7 @@ export default [
 	{
 		input: 'src/worker.js',
 		output: {
-			sourcemap: true,
+			sourcemap: false, // otherwise the .map.js file is requested on every action.
 			format: 'iife',
 			name: 'app',
 			dir: 'public/build/'
