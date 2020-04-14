@@ -1,10 +1,12 @@
 Crossword Composer
 ==================
 
+![Screenshot of Crossword Composer](images/screenshot.png)
+
 Crossword Composer is a browser-based tool for making crossword puzzles. This codebase consists of two main pieces:
 
-- A word puzzle auto-filler, which finds a set of words that conform to a set of shared-letter constraints.
-- A browser-based UI, which allows interactive puzzle creation.
+- A word puzzle auto-filler (Rust), which finds a set of words that conform to a set of shared-letter constraints.
+- A browser-based UI (JavaScript / Svelte), which allows interactive puzzle creation.
 
 Auto-filler
 -----------
