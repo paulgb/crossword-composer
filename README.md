@@ -64,4 +64,4 @@ See Also
 
 - [Qxw](https://www.quinapalus.com/qxw.html) and [Crux](https://www.quinapalus.com/crux.html) are open-source word game creation tools. Although my filler uses a different solving approach (I think?), the constraint specification approach I took was inspired by reading its documentation.
 - [Steven Morse](https://stmorse.github.io/journal/IP-Crossword-puzzles.html) has written about using integer programming to solve crosswords. Although I didn't take this approach, it was a helpful read.
-- [Phil](http://www.keiranking.com/phil/) ([GitHub repo](https://github.com/keiranking/Phil)) is a more fully-featured HTML crossword creator. Its creators also took the approach of running a filler in the browser with WebAssembly.
+- [Phil](http://www.keiranking.com/phil/) ([GitHub repo](https://github.com/keiranking/Phil)) is a more fully-featured HTML crossword creator. Its creators also took the approach of running a filler in the browser with WebAssembly. (Thanks to [Steven Sawtelle](https://twitter.com/StevenSawtelle) for the pointer.)
