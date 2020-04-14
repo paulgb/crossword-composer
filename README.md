@@ -1,22 +1,46 @@
 Crossword Composer
 ==================
 
-Crossword Composer is a browser-based tool for making crosswords. It consists of two main components:
+Crossword Composer is a browser-based tool for making crossword puzzles. This codebase consists of two main pieces:
 
-- A generic word puzzle auto-filler which, finds a set unique of words that conforms to given shared-letter constraints. The auto-filler is written in Rust, and could be used as a standalone library. The auto-filler itself is not aware of the structure of the crossword. Its input is a list of constraints that the output must satisfy (for example, the "third letter of the third word must be the same as the second letter of the fifth word"). As a result, it could easily be used for most crossword variants with no modification, besides generating suitable input.
+- A generic word puzzle auto-filler, which finds a set of words that conform to a given shared-letter constraints. The auto-filler is written in Rust, and could be used as a standalone library. The auto-filler itself is not aware of the structure of the crossword. It is more akin to a SAT solver which takes a problem distilled down to its most basic representation: a list of constraints to be satisfied.
 - A browser-based UI which displays a blank crossword and allows the user to put blocks in place to shape the grid. The UI loads a version of the auto-filler compiled to WebAssembly to (try to) fill in the puzzle as the user types.
 
 Auto-filler
 -----------
 
-The auto-filler takes two inputs: a dictionary of allowable words, and a set of constraints that a solution must satisfy. It returns a flat list of characters which specify a complete solution. The mapping from characters in words to indices in the final output is a many-to-one mapping, since multiple words (two in the case of a crossword) can share the same character. This mapping _is itself_ the only representation of the puzzle that the filler sees; it is sufficient to describe the constraints that need to be satisfied.
+The auto-filler takes two inputs: a dictionary of possible words, and a set of constraints that the solution must satisfy. The constraints are provided as a list of lists, where each inner list represents a word and each entry in it identifies a letter assignment decision that the filler must make. Letters shared by multiple words are indicated by referencing the same letter assignment in the appropriate location.
 
-The filler uses a standard backtracking approach, but two enhancements are made to make it decently fast:
+To better understand, here's one way that a simple crossword puzzle could be turned into an input representation for the solver.
 
-- The backtracking algorithm works by taking (and untaking) atomic steps of one word at a time. The order of words visited in these steps is always the same within an individual solution attempt. The order is chosen as follows:
-  1. For each word, we start a count of how many "previously taken" words overlap with that word. Initially, these are set to zero, because we haven't taken any words yet.
-  2. Until no words remain, we take the word with the *most* overlaps with other words, breaking ties by taking the *longest* word. These measures are both heuristics for picking the words where we will have the fewest choices at that point in the search, leading to dead-ends quickly when we've started down an impossible path.
-- For each step in the backtracking search, an in-memory index is created. The index provides a fast mapping between possible sets of the letters that would be *known* at a given stage to all of the sets of letters that could be filled in for the remaining letters to create a valid word.
+![A diagram showing the input representation.](images/input_representation.png)
+
+Represented in code, the input representaiton looks like this:
+
+    [
+      [0, 1, 3, 6, 7, 11],
+      [2, 3, 4, 5],
+      [7, 8, 9, 10]
+    ]
+
+A valid solution for this particular puzzle, as returned by the solver, could be:
+
+    ['S', 'H', 'D', 'A', 'R', 'K', 'I', 'N', 'G', 'S']
+
+The location of each letter corresponds to the numbers in the puzzle structure diagram above, and can be reassembled into a solution as shown below.
+
+![An example output representation from the solver.](images/output_representation.png)
+
+Note that the actual numbers assigned doen't really matter for the purposes of the representation; e.g. if we swap 5 and 7 everywhere they appear we have an equally valid representation of the puzzle.
+
+The filler uses a standard backtracking approach: for each word that needs to be picked, it considers every possible word, subject to the constraints introduced by words already picked. Whenever it reaches a state where no more words exist that satisfy these constraints, it backtracks and reverses prior word selections.
+
+The filler attempts to speed up this process in two ways:
+
+1. It attempts to pick a good order to solve the words in. The basic idea is that when we are on a dead-end route, we want to know as soon as possible that no solution will work so that we can backtrack without wasting time. Note that once we know the order in which we will pick the words, we also know which letters (by position) will be known and which will be unknown by the time we need to fill that word. The heuristic for picking an order is a simple greedy algorithm: first we take the longest word, then we continually take the word with the highest number of letters that overlap with previously picked words (breaking ties by length, preferring the longest).
+2. For each step in the backtracking search, an in-memory index is created just for that step. The index provides a fast mapping between possible sets of the letters that will be *known* at a given stage to all of the sets of letters that are *unknown*. One way to think of these indexes is as a sort of permuted dictionary. If you have a regular dictionary, and you want to fill in the blanks in the word `sp___`, it's a fast operation. But if you want to fill in the word `_p__n`, it's slow -- you have to scan the whole dictionary! If you are planning to solve a lot of `_#__#` fill-in-the-blanks, as we are, it is worthwhile to create a whole new dictionary where you permute the words so that the known letters appear at the beginning (for example, in the case mentioned above, `spoon` becomes `pnsoo`). Luckly, once we have pre-determine our order, the blanks for each word *will* always be in the same spot for each word we are trying to solve for! So we create one of these indexes for each of them.
+
+Once those tasks are completed, we begin backtracking. At this point, we can even throw away the dictionary we were given as input, since the indexes we built for each word contain all the vocabulary information we need.
 
 Browser UI
 ----------
