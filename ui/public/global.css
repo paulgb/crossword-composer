@@ -6,7 +6,7 @@ html, body {
 }
 
 .main {
-	width: 600px;
+	max-width: 600px;
 	margin: 20px auto 60px auto;
 }
 
