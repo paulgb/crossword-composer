@@ -1,5 +1,5 @@
-Crossword Composer
-==================
+[Crossword Composer](https://crossword.paulbutler.org)
+====================
 
 ![Screenshot of Crossword Composer](images/screenshot.png)
 
