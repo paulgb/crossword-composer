@@ -96,6 +96,10 @@
     font-weight: normal;
   }
 
+  .letter {
+    padding-top: 9px;
+  }
+
   table.crossword {
     border-collapse: collapse;
     margin: 40px auto;
@@ -107,11 +111,15 @@
     width: 36px;
     border-spacing: 0;
     text-align: center;
-    position: relative;
     font-weight: bold;
     color: #333;
     background: #fff;
     cursor: default;
+  }
+
+  .cell {
+    position: relative;
+    height: 36px;
   }
 
   .crossword.dirty td {
@@ -133,8 +141,10 @@
               on:click={() => toggleCell(i, j)}
               class={cell.filled ? 'filled' : ''}
               title={cell.index}>
-              {(hideLetters || cell.filled) ? '' : (cell.value || '').toUpperCase()}
-              <div class="number">{cell.number ? cell.number : ''}</div>
+              <div class="cell">
+                <div class="letter">{(hideLetters || cell.filled) ? '' : (cell.value || '').toUpperCase()}</div>
+                <div class="number">{cell.number ? cell.number : ''}</div>
+              </div>
             </td>
           {/each}
         </tr>
