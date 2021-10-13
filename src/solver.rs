@@ -3,15 +3,15 @@ use crate::grid::Grid;
 use crate::index::Index;
 use std::collections::BTreeSet;
 
-struct SolverStep {
+pub struct SolverStep {
     pub index: Index,
-    pub input_slots: Vec<usize>,  // Vector of slot indices to pull as input.
+    pub input_slots: Vec<usize>, // Vector of slot indices to pull as input.
     pub output_slots: Vec<usize>, // Vector of slot indices to put output in.
 }
 
-struct SolverState {
-    result: Vec<char>,
-    words: Vec<usize>,
+pub struct SolverState {
+    pub result: Vec<char>,
+    pub words: Vec<usize>,
 }
 
 impl SolverState {
@@ -19,14 +19,11 @@ impl SolverState {
         let result = vec![' '; grid.slots];
         let words = vec![0; grid.num_words()];
 
-        SolverState {
-            result,
-            words,
-        }
+        SolverState { result, words }
     }
 }
 
-fn generate_solver_steps(grid: &Grid, dict: &Dictionary) -> Vec<SolverStep> {
+pub fn generate_solver_steps(grid: &Grid, dict: &Dictionary) -> Vec<SolverStep> {
     let mut solver_steps: Vec<SolverStep> = Vec::with_capacity(grid.num_words());
 
     // Word index -> number of constraints on this word.
@@ -65,23 +62,26 @@ fn generate_solver_steps(grid: &Grid, dict: &Dictionary) -> Vec<SolverStep> {
             }
         }
 
-        let index =
-            Index::new(known_letters, grid.words[max_idx].len(), &dict);
+        let index = Index::new(known_letters, grid.words[max_idx].len(), &dict);
         solver_steps.push(SolverStep {
             index,
             input_slots,
-            output_slots
+            output_slots,
         })
     }
 
     solver_steps
 }
 
-fn solve_step(state: &mut SolverState, steps: &Vec<SolverStep>, step: usize) -> bool {
+pub fn solve_step(state: &mut SolverState, steps: &Vec<SolverStep>, step: usize) -> bool {
     if step >= steps.len() {
         true
     } else {
-        let SolverStep {index, input_slots, output_slots} = &steps[step];
+        let SolverStep {
+            index,
+            input_slots,
+            output_slots,
+        } = &steps[step];
 
         let known_letters: Vec<char> = input_slots.iter().map(|j| state.result[*j]).collect();
 
@@ -96,7 +96,7 @@ fn solve_step(state: &mut SolverState, steps: &Vec<SolverStep>, step: usize) -> 
             }
 
             if solve_step(state, steps, step + 1) {
-                return true
+                return true;
             }
         }
 

@@ -1,12 +1,12 @@
 <script>
   import { Crossword } from "./crossword"
-  import { Solver } from "./solver"
+  import { ParallelSolver } from "./parallel/main"
 
   const allowedDimensions = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
   $: dimension = 8
 
   $: crossword = new Crossword(dimension, gridChanged)
-  let solver = new Solver(onSolution)
+  let solver = new ParallelSolver(onSolution)
 
   let hideLetters = false
 

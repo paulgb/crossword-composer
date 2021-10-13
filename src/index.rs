@@ -6,8 +6,7 @@ static EMPTY_VEC2: Vec<Vec<char>> = Vec::new();
 
 #[derive(Clone)]
 pub struct Index {
-    word_length: usize,              // Length of words that make up this index.
-    pub known_letters: Vec<usize>,   // Indices of letters known at the step when the index is used.
+    pub known_letters: Vec<usize>, // Indices of letters known at the step when the index is used.
     pub unknown_letters: Vec<usize>, // Indices of letters *not* known at the step when the index is used.
     known_to_unknown: HashMap<Vec<char>, Vec<(usize, Vec<char>)>>, // Map of unknown to known letters and word indices.
 }
@@ -33,7 +32,6 @@ impl Index {
 
         Index {
             known_letters,
-            word_length,
             known_to_unknown,
             unknown_letters,
         }
